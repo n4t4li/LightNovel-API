@@ -2,18 +2,32 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\LightNovelController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
+| All routes here have /api prefix automatically 
+| Example: http://localhost:/api/lightnovels
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/login', [RegisterController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/logout', [RegisterController::class, 'logout']);
+
+    Route::post('/lightnovels', [LightNovelController::class, 'store']);
+    Route::put('/lightnovels/{id}', [LightNovelController::class, 'update']);
+    Route::delete('/lightnovels/{id}', [LightNovelController::class, 'destroy']);
 });
+
+Route::get('/lightnovels', [LightNovelController::class, 'index']);  // list
+Route::get('/lightnovels/{id}', [LightNovelController::class, 'show']); // show one
