@@ -6,10 +6,23 @@
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
-        "axios": "^1.1.2",
+        "@vitejs/plugin-react": "^4.2.0",
+        "@vue/compiler-sfc": "^3.5.24",
+        "axios": "^1.13.2",
         "bootstrap": "^5.2.3",
-        "laravel-vite-plugin": "^0.7.2",
+        "laravel-vite-plugin": "^2.0.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "sass": "^1.56.1",
-        "vite": "^4.0.0"
+        "vite": "^7.2.4",
+        "vue-loader": "^17.3.1"
+    },
+    "dependencies": {
+        "react-bootstrap": "^2.10.10",
+        "react-router-dom": "^7.9.6",
+        "sweetalert2": "^11.26.3",
+        "vue": "^3.5.24",
+        "vue-axios": "^3.5.2",
+        "vue-router": "^4.0.13"
     }
 }

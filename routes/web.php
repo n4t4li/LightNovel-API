@@ -29,6 +29,11 @@ Route::middleware(['auth', 'administrateur'])->prefix('admin')->group(function (
     Route::get('/', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
 });
 
+Route::get('{any}', function () {
+    return view('monopage');
+})->where('any', '.*');
+
+
 Route::resource('light_novels', LightNovelController::class);
 Route::resource('commentaires', CommentaireController::class);
 Route::get('/light_novels/autocomplete', [App\Http\Controllers\LightNovelController::class, 'autocomplete'])->name('light_novels.autocomplete');
