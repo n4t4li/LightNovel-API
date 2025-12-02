@@ -8,13 +8,8 @@
     <!-- CSRF token for Axios / forms -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Compiled CSS (Laravel Mix) -->
-    @if (file_exists(public_path(mix('css/app.css'))))
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    @else
-        <!-- Fallback if mix file not present during dev -->
-        <link rel="stylesheet" href="/css/app.css">
-    @endif
+    <!-- Vite CSS & JS -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <style>
       /* simple v-cloak fallback to hide unmounted template */
@@ -54,13 +49,6 @@
         </div>
     </div>
 
-    <!-- Compiled JS (Laravel Mix) -->
-    @if (file_exists(public_path(mix('js/app.js'))))
-        <script src="{{ mix('js/app.js') }}" defer></script>
-    @else
-        <!-- Fallback during local development if Mix file isn't present -->
-        <script src="/js/app.js" defer></script>
-    @endif
 
     <!-- Optional: small script to remove the loading fallback once Vue mounts.
          Your main app.js can also do this after mount. -->
