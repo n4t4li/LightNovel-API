@@ -18,22 +18,33 @@ class RegisterController extends BaseController
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'g-recaptcha-response' => 'required',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError('Validation error', $validator->errors(), 422);
         }
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret'   => env('VITE_RECAPTCHA_SECRET_KEY'),
+            'response' => $request->input('g-recaptcha-response')
+        ]);
 
-        $user = User::create($input);
-        $token = $user->createToken('LightNovelAPI')->plainTextToken;
+        $captcha = $response->json();
+        if (empty($captcha['success']) || !$captcha['success']) {
+            return response()->json(['success' => false, 'message' => 'Échec de la vérification reCAPTCHA'], 400);
+        }
 
-        return $this->sendResponse([
-            'user'  => $user,
-            'token' => $token,
-        ], 'Inscription réussie.');
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Utilisateur enregistré avec succès.', 'data' => [
+            'token' => $user->createToken('LightNovelAPI')->plainTextToken,
+            'name' => $user->name
+        ]], 201);
     }
 
    // pour login et logout

@@ -16,6 +16,8 @@
     <script src="{{ mix('/js/vendor.js') }}" defer></script>
     <script src="{{ mix('/js/app.js') }}" defer></script>
 
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+
     <style>
       [v-cloak] { display: none; }
       body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
