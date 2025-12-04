@@ -63,7 +63,9 @@ export default {
                 await this.refreshAuth();
 
                 // redirect to dashboard or home
-                this.$router.push({ name: "dashboard" });
+                this.$router.push({ name: "dashboard" }).then(() => {
+                    window.location.reload();
+                });
             } catch (err) {
                 // Try to display a meaningful message
                 if (

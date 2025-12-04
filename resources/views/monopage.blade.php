@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Monopage SPA') }}</title>
 
-    <!-- CSRF token for Axios / forms -->
+    <!-- CSRF token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Vite CSS & JS -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <!-- Laravel Mix CSS & JS -->
+    <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
+    
+    <!-- Load webpack dependencies in correct order -->
+    <script src="{{ mix('/js/manifest.js') }}" defer></script>
+    <script src="{{ mix('/js/vendor.js') }}" defer></script>
+    <script src="{{ mix('/js/app.js') }}" defer></script>
 
     <style>
-      /* simple v-cloak fallback to hide unmounted template */
       [v-cloak] { display: none; }
-      /* optional small reset for body so dev pages look fine */
       body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
     </style>
 </head>
@@ -35,31 +38,24 @@
     @endphp
 
     <!-- Make the auth payload available to the frontend -->
+    <!-- Make the auth payload available to the frontend -->
     <script>
-        // window.__USER_AUTH__ is a Base64-encoded JSON string
-        // Frontend: const auth = JSON.parse(atob(window.__USER_AUTH__));
         window.__USER_AUTH__ = "{{ $user_auth_base64 }}";
     </script>
 
     <!-- Root element for Vue to mount -->
     <div id="app" v-cloak>
-        <!-- Optionally add a fallback skeleton or loading indicator here -->
         <div id="spa-loading" aria-hidden="true">
             Loading...
         </div>
     </div>
 
-
-    <!-- Optional: small script to remove the loading fallback once Vue mounts.
-         Your main app.js can also do this after mount. -->
+    <!-- Optional: remove loading fallback once Vue mounts -->
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        // If Vue hasn't mounted in a short while, keep the simple loading text visible.
-        // Vue should replace the contents of #app when it mounts.
         setTimeout(function () {
           const loading = document.getElementById('spa-loading');
           if (loading && document.getElementById('app').childElementCount === 1) {
-            // keep minimal message; Vue will replace on mount
             loading.textContent = 'Starting application...';
           }
         }, 300);

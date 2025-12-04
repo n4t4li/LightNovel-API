@@ -26,9 +26,12 @@
                         </button>
                     </template>
                     <template v-else>
-                        <router-link to="/login" class="nav-link"
-                            >Login</router-link
-                        >
+                        <router-link to="/login" class="nav-link">
+                            Login
+                        </router-link>
+                        <router-link to="/register" class="nav-link">
+                            Register
+                        </router-link>
                     </template>
                 </div>
             </div>
@@ -119,7 +122,9 @@ export default {
                 // Clear frontend auth
                 window.__USER_AUTH__ = { isLoggedin: false, user: null };
                 // Redirect to home
-                this.$router.push({ name: "home" });
+                this.$router.push({ name: "home" }).then(() => {
+                    window.location.reload();
+                });
             } catch (err) {
                 console.error("Logout failed:", err);
                 // Even if logout fails, clear local auth state
