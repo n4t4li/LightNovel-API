@@ -10,6 +10,9 @@
                 </div>
                 <div class="nav-links">
                     <router-link to="/" class="nav-link">Home</router-link>
+                    <router-link to="/apropos" class="nav-link"
+                        >À propos</router-link
+                    >
                     <template v-if="auth && auth.isLoggedin">
                         <router-link to="/dashboard" class="nav-link"
                             >Dashboard</router-link
