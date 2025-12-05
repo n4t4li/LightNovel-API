@@ -9,14 +9,16 @@
                     </router-link>
                 </div>
                 <div class="nav-links">
-                    <router-link to="/" class="nav-link">Home</router-link>
+                    <router-link to="/lightnovels" class="nav-link"
+                        >Light Novels</router-link
+                    >
                     <router-link to="/apropos" class="nav-link"
                         >À propos</router-link
                     >
+                    <router-link to="/dashboard" class="nav-link"
+                        >Dashboard</router-link
+                    >
                     <template v-if="auth && auth.isLoggedin">
-                        <router-link to="/dashboard" class="nav-link"
-                            >Dashboard</router-link
-                        >
                         <span class="nav-user">
                             {{ auth.user?.name || auth.user?.email || "User" }}
                         </span>
@@ -125,14 +127,14 @@ export default {
                 // Clear frontend auth
                 window.__USER_AUTH__ = { isLoggedin: false, user: null };
                 // Redirect to home
-                this.$router.push({ name: "home" }).then(() => {
+                this.$router.push({ name: "lightnovels" }).then(() => {
                     window.location.reload();
                 });
             } catch (err) {
                 console.error("Logout failed:", err);
                 // Even if logout fails, clear local auth state
                 window.__USER_AUTH__ = { isLoggedin: false, user: null };
-                this.$router.push({ name: "home" });
+                this.$router.push({ name: "lightnovels" });
             } finally {
                 this.loggingOut = false;
             }

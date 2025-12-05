@@ -22,7 +22,7 @@ class Commentaire extends Model
      */
     public function lightNovel()
     {
-        return $this->belongsTo(LightNovel::class, 'Light_Novel_id', 'id');
+        return $this->belongsTo(LightNovel::class, 'light_novel_id', 'id');
     }
 
     /**
@@ -31,7 +31,7 @@ class Commentaire extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'users_id', 'id');
+        return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
     }
 
 }

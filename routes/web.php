@@ -19,7 +19,7 @@ Route::get('/light_novels/autocomplete', [LightNovelController::class, 'autocomp
 // Route::get('/articles/autocomplete', [ArticleController::class, 'autocomplete'])->name('articles.autocomplete');
 
 Route::get('/', function () {
-    return redirect('/light_novels');
+    return redirect('/lightnovels');
 });
 
 Route::get('/lang/{locale}', [LocalizationController::class, 'index']);
@@ -31,7 +31,7 @@ Route::middleware(['auth', 'administrateur'])->prefix('admin')->group(function (
 
 Route::get('{any}', function () {
     return view('monopage');
-})->where('any', '.*');
+})->where('any', '^(?!api).*$');
 
 
 Route::resource('light_novels', LightNovelController::class);

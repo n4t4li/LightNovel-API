@@ -48,15 +48,16 @@ class LightNovelController extends BaseController
 
     //Afficher un Light Novel spécifique (GET /api/lightnovels/{id})
     public function show($id)
-    {
-        $novel = LightNovel::find($id);
+{
+    $novel = LightNovel::with(['commentaires.user'])->find($id);
 
-        if (is_null($novel)) {
-            return $this->sendError('Light Novel non trouvé.');
-        }
-
-        return $this->sendResponse($novel, 'Light Novel récupéré avec succès.');
+    if (!$novel) {
+        return response()->json(['success' => false, 'message' => 'Light novel non trouvé'], 404);
     }
+
+    return response()->json(['success' => true, 'data' => $novel]);
+}
+
 
     //Mettre à jour un Light Novel (PUT /api/lightnovels/{id})
     public function update(Request $request, $id)

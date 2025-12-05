@@ -26,6 +26,6 @@ class LightNovel extends Model
      */
     public function commentaires()
     {
-        return $this->hasMany(Commentaire::class, 'Light_Novel_id', 'id');
+        return $this->hasMany(Commentaire::class, 'light_novel_id', 'id');
     }
 }

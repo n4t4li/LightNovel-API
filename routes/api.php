@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\LightNovelController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\API\CommentaireController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/lightnovels', [LightNovelController::class, 'store']);
     Route::put('/lightnovels/{id}', [LightNovelController::class, 'update']);
+    Route::post('/lightnovels/{id}/commentaires', [CommentaireController::class, 'store']);
     Route::delete('/lightnovels/{id}', [LightNovelController::class, 'destroy']);
 });
 
