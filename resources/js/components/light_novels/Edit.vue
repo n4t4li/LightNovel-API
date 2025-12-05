@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "../../axios";
 
 export default {
     name: "EditLightNovel",
@@ -64,7 +64,7 @@ export default {
         },
         async updateLightNovel() {
             try {
-                await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie");
+                await api.get("/sanctum/csrf-cookie");
 
                 const formData = new FormData();
                 for (const key in this.form) {
@@ -82,7 +82,7 @@ export default {
 
                 formData.append("_method", "PUT");
 
-                await axios.post(`/api/lightnovels/${this.form.id}`, formData, {
+                await api.post(`/api/lightnovels/${this.form.id}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
 
