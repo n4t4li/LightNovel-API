@@ -23,9 +23,38 @@
                 <label>Content</label>
                 <textarea v-model="form.Contenu"></textarea>
             </div>
+
             <div>
                 <label>Photo</label>
-                <input type="file" @change="handleFileUpload" />
+
+                <div
+                    class="dropzone"
+                    @dragover.prevent
+                    @dragenter.prevent="onDragEnter"
+                    @dragleave.prevent="onDragLeave"
+                    @drop.prevent="onDrop"
+                    :class="{ 'is-dragover': isDragOver }"
+                    style="border: 2px dashed #ccc; padding: 1rem; text-align: center; cursor: pointer;"
+                    @click="triggerFileSelect"
+                >
+                    <input
+                        ref="fileInput"
+                        type="file"
+                        accept="image/*"
+                        style="display: none"
+                        @change="handleFileUpload"
+                    />
+
+                    <div v-if="photoPreview">
+                        <img :src="photoPreview" alt="preview" style="max-width: 100%; max-height: 300px;" />
+                        <div style="margin-top: 0.5rem">
+                            <button type="button" @click.stop.prevent="removePhoto">Remove</button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p>Drag & drop an image here, or click to select.</p>
+                    </div>
+                </div>
             </div>
 
             <button type="submit">Create</button>
@@ -34,7 +63,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "../../axios";
 
 export default {
     name: "CreateLightNovel",
@@ -48,11 +77,44 @@ export default {
                 Contenu: "",
             },
             photoFile: null,
+            photoPreview: null,
+            isDragOver: false,
         };
     },
     methods: {
+        triggerFileSelect() {
+            this.$refs.fileInput.click();
+        },
         handleFileUpload(e) {
-            this.photoFile = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : e;
+            if (!file) return;
+            this.setPhotoFile(file);
+        },
+        onDragEnter() {
+            this.isDragOver = true;
+        },
+        onDragLeave() {
+            this.isDragOver = false;
+        },
+        onDrop(e) {
+            this.isDragOver = false;
+            const file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (file) this.setPhotoFile(file);
+        },
+        setPhotoFile(file) {
+            if (!file.type.startsWith("image/")) return;
+            this.photoFile = file;
+            if (this.photoPreview) URL.revokeObjectURL(this.photoPreview);
+            this.photoPreview = URL.createObjectURL(file);
+        },
+        removePhoto() {
+            this.photoFile = null;
+            if (this.photoPreview) {
+                URL.revokeObjectURL(this.photoPreview);
+                this.photoPreview = null;
+            }
+            // clear file input value
+            if (this.$refs.fileInput) this.$refs.fileInput.value = null;
         },
         async createLightNovel() {
             try {
@@ -62,7 +124,7 @@ export default {
                 }
                 if (this.photoFile) formData.append("photo", this.photoFile);
 
-                await axios.post("/api/lightnovels", formData, {
+                await api.post("/api/lightnovels", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
 
@@ -71,6 +133,9 @@ export default {
                 console.error(err);
             }
         },
+    },
+    beforeUnmount() {
+        if (this.photoPreview) URL.revokeObjectURL(this.photoPreview);
     },
 };
 </script>

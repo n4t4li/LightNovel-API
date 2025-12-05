@@ -28,10 +28,38 @@
                 <textarea v-model="form.Contenu"></textarea>
             </div>
 
-            <div>
-                <label>Photo</label>
-                <input type="file" @change="handleFileUpload" />
-            </div>
+                <div>
+                    <label>Photo</label>
+
+                    <div
+                        class="dropzone"
+                        @dragover.prevent
+                        @dragenter.prevent="onDragEnter"
+                        @dragleave.prevent="onDragLeave"
+                        @drop.prevent="onDrop"
+                        :class="{ 'is-dragover': isDragOver }"
+                        style="border: 2px dashed #ccc; padding: 1rem; text-align: center; cursor: pointer;"
+                        @click="triggerFileSelect"
+                    >
+                        <input
+                            ref="fileInput"
+                            type="file"
+                            accept="image/*"
+                            style="display: none"
+                            @change="handleFileUpload"
+                        />
+
+                        <div v-if="photoPreview">
+                            <img :src="photoPreview" alt="preview" style="max-width: 100%; max-height: 300px;" />
+                            <div style="margin-top: 0.5rem">
+                                <button type="button" @click.stop.prevent="removePhoto">Remove</button>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <p>Drag & drop an image here, or click to select.</p>
+                        </div>
+                    </div>
+                </div>
 
             <button type="submit">Save</button>
         </form>
@@ -47,20 +75,58 @@ export default {
         return {
             form: null,
             photoFile: null,
+            photoPreview: null,
+            isDragOver: false,
         };
     },
     async mounted() {
         const id = this.$route.params.id;
         try {
-            const res = await axios.get(`/api/lightnovels/${id}`);
+            const res = await api.get(`/api/lightnovels/${id}`);
             this.form = res.data.data;
+            if (this.form?.photo) {
+                // assume photos stored in public/images
+                this.photoPreview = `/images/${this.form.photo}`;
+            }
         } catch (err) {
             console.error(err);
         }
     },
     methods: {
+        triggerFileSelect() {
+            this.$refs.fileInput.click();
+        },
         handleFileUpload(e) {
-            this.photoFile = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : e;
+            if (!file) return;
+            this.setPhotoFile(file);
+        },
+        onDragEnter() {
+            this.isDragOver = true;
+        },
+        onDragLeave() {
+            this.isDragOver = false;
+        },
+        onDrop(e) {
+            this.isDragOver = false;
+            const file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (file) this.setPhotoFile(file);
+        },
+        setPhotoFile(file) {
+            if (!file.type.startsWith("image/")) return;
+            this.photoFile = file;
+            if (this.photoPreview && this.photoPreview.startsWith("blob:")) {
+                URL.revokeObjectURL(this.photoPreview);
+            }
+            this.photoPreview = URL.createObjectURL(file);
+        },
+        removePhoto() {
+            this.photoFile = null;
+            if (this.photoPreview && this.photoPreview.startsWith("blob:")) {
+                URL.revokeObjectURL(this.photoPreview);
+            }
+            this.photoPreview = null;
+            if (this.$refs.fileInput) this.$refs.fileInput.value = null;
         },
         async updateLightNovel() {
             try {
@@ -94,6 +160,11 @@ export default {
                 }
             }
         },
+    },
+    beforeUnmount() {
+        if (this.photoPreview && this.photoPreview.startsWith("blob:")) {
+            URL.revokeObjectURL(this.photoPreview);
+        }
     },
 };
 </script>

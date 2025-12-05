@@ -5,7 +5,7 @@
         <p>Status: {{ novel.statut }}</p>
         <p>Chapters: {{ novel.chapitres }}</p>
         <p>{{ novel.Contenu }}</p>
-        <img v-if="novel.photo" :src="`/storage/${novel.photo}`" width="200" />
+        <img v-if="novel.photo" :src="imageUrl(novel.photo)" width="200" />
 
         <router-link :to="`/lightnovels/${novel.id}/edit`">Edit</router-link>
         <router-link to="/lightnovels">Back</router-link>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "../../axios";
 
 export default {
     data() {
@@ -47,13 +47,20 @@ export default {
     methods: {
         async fetchNovel() {
             const { id } = this.$route.params;
-            const res = await axios.get(`/api/lightnovels/${id}`);
+            const res = await api.get(`/api/lightnovels/${id}`);
             this.novel = res.data.data;
+        },
+        imageUrl(photo) {
+            if (!photo) return '';
+            if (photo.startsWith('http://') || photo.startsWith('https://') || photo.startsWith('/')) {
+                return photo;
+            }
+            return `/images/${photo}`;
         },
         async addComment() {
             if (!this.newComment.trim()) return;
 
-            await axios.post(`/api/lightnovels/${this.novel.id}/commentaires`, {
+            await api.post(`/api/lightnovels/${this.novel.id}/commentaires`, {
                 texte: this.newComment,
             });
 
